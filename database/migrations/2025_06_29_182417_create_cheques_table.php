@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('tiers');
             $table->text('commentaire')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('traite_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
         });
     }

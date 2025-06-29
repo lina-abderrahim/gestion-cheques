@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('traites', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('cheque_id')->unique()->constrained()->onDelete('cascade');
             $table->dateTime('date_impression')->nullable();
             $table->string('fichier_pdf')->nullable();
             $table->timestamps();
