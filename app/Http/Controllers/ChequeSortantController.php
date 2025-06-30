@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Cheque;
+use Illuminate\Http\Request;
+
+class ChequeSortantController extends Controller
+{
+    public function index()
+    {
+        $cheques = Cheque::where('type', 'sortant')->orderByDesc('created_at')->get();
+        return view('cheques.sortants.index', compact('cheques'));
+    }
+
+    public function create()
+    {
+        return view('cheques.sortants.create');
+    }
+
+    public function store(Request $request)
+    {
+        // Valider les données du formulaire
+        $validated = $request->validate([
+            'numero' => 'required|unique:cheques',
+            'montant' => 'required|numeric',
+            'date_echeance' => 'required|date',
+            'banque' => 'required|string',
+            'tiers' => 'required|string',
+            'commentaire' => 'nullable|string',
+        ]);
+
+        // Ajouter les champs fixes
+        $validated['type'] = 'sortant';
+        $validated['statut'] = 'en_attente';
+        $validated['user_id'] = auth()->id();
+
+        // Enregistrer le chèque
+        Cheque::create($validated);
+
+        // Rediriger avec message de succès
+        return redirect()->route('cheques.sortants.index')->with('success', 'Chèque sortant ajouté avec succès.');
+    }
+}

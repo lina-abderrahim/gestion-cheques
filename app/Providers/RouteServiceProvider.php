@@ -38,6 +38,9 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')
                 ->group(base_path('routes/cheques_entrant.php'));
+            Route::middleware('web')
+                ->group(base_path('routes/cheques_sortant.php'));
+
         });
     }
 }
