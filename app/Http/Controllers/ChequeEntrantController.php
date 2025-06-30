@@ -42,5 +42,39 @@ class ChequeEntrantController extends Controller
 
         return redirect()->route('cheques.entrants.index')->with('success', 'Chèque entrant ajouté.');
     }
+
+    public function edit(Cheque $cheque)
+    {
+         if ($cheque->type !== 'entrant') abort(403);
+         return view('cheques.entrants.edit', compact('cheque'));
+    }
+
+    public function update(Request $request, Cheque $cheque)
+{
+    if ($cheque->type !== 'entrant') abort(403);
+
+    $request->validate([
+        'numero' => 'required|unique:cheques,numero,' . $cheque->id,
+        'montant' => 'required|numeric',
+        'date_echeance' => 'required|date',
+        'banque' => 'required|string',
+        'tiers' => 'required|string',
+        'statut'=>'required|string',
+        'type'=>'required|string'
+    ]);
+
+    $cheque->update($request->all());
+
+    return redirect()->route('cheques.entrants.index')->with('success', 'Chèque modifié avec succès.');
+}
+    public function destroy(Cheque $cheque)
+{
+    if ($cheque->type !== 'entrant') abort(403);
+
+    $cheque->delete();
+
+    return redirect()->route('cheques.entrants.index')->with('success', 'Chèque supprimé.');
+}
+
 }
 

@@ -7,7 +7,8 @@
 </head>
 <body class="bg-gray-100">
     <nav class="bg-white shadow p-4 flex justify-between">
-        <div><a href="/" class="text-xl font-bold">Tableau de bord</a></div>
+        <div><a href="{{ route('dashboard') }}" class="text-xl font-bold" hover:underline>Tableau de bord</a></div>
+
         <div>
             @auth
                 <span>{{ auth()->user()->name }}</span>
