@@ -18,8 +18,7 @@ class Cheque extends Model
         'banque',
         'tiers',
         'commentaire',
-        'user_id',
-        'traite_id'
+        'user_id'
     ];
 
     // Relations
