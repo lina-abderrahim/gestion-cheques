@@ -2,12 +2,12 @@
 
 @section('content')
 
-    {{-- ✅ Message flash de succès --}}
+
     @if (session('success'))
         <div id="flash-message" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
             {{ session('success') }}
 
-            {{-- Bouton de fermeture manuelle --}}
+         
             <button onclick="this.parentElement.style.display='none'" class="absolute top-0 right-0 px-4 py-3">
                 <svg class="fill-current h-6 w-6 text-green-700" role="button" xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20">
@@ -17,7 +17,7 @@
             </button>
         </div>
 
-        {{-- Script pour disparition automatique après 3 secondes --}}
+        
         <script>
             setTimeout(() => {
                 const flash = document.getElementById('flash-message');
@@ -26,7 +26,7 @@
         </script>
     @endif
 
-    {{-- 🔽 Le reste de ton tableau / contenu commence ici --}}
+    
     <div class="p-6">
         <h1 class="text-2xl font-bold mb-4">Liste des chèques sortants</h1>
 
