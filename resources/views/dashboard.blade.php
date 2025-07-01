@@ -3,6 +3,13 @@
 @section('content')
 <div class="container mx-auto p-4">
 
+    {{-- Message de succès --}}
+    @if(session('success'))
+        <div class="mb-4 p-3 bg-green-100 text-green-800 rounded shadow">
+            {{ session('success') }}
+        </div>
+    @endif
+
     {{-- Boutons d'action --}}
     <div class="flex justify-end gap-4 mb-4">
         <a href="{{ route('cheques.entrants.create') }}" class="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded">
@@ -24,6 +31,7 @@
                 <th class="border border-gray-300 px-4 py-2">Tiers</th>
                 <th class="border border-gray-300 px-4 py-2">Date création</th>
                 <th class="border border-gray-300 px-4 py-2">Statut</th>
+                <th class="border border-gray-300 px-4 py-2">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -36,6 +44,27 @@
                     <td class="px-4 py-2">{{ $cheque->tiers }}</td>
                     <td class="px-4 py-2">{{ $cheque->created_at->format('d/m/Y H:i') }}</td>
                     <td class="px-4 py-2 capitalize">{{ $cheque->statut }}</td>
+                    <td class="px-4 py-2 space-x-2">
+                        <div class="flex justify-center gap-2">
+                            {{-- Bouton Modifier --}}
+                            @if ($cheque->type === 'entrant')
+                                <a href="{{ route('cheques.entrants.edit', $cheque) }}" class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-3 py-1 rounded text-sm">Modifier</a>
+                            @else
+                                <a href="{{ route('cheques.sortants.edit', $cheque) }}" class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-3 py-1 rounded text-sm">Modifier</a>
+                            @endif
+
+                            {{-- Bouton Supprimer --}}
+                            @if ($cheque->type === 'entrant')
+                                <form action="{{ route('cheques.entrants.destroy', $cheque) }}" method="POST" onsubmit="return confirm('Supprimer ce chèque ?');">
+                            @else
+                                <form action="{{ route('cheques.sortants.destroy', $cheque) }}" method="POST" onsubmit="return confirm('Supprimer ce chèque ?');">
+                            @endif
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-medium px-3 py-1 rounded text-sm">Supprimer</button>
+                            </form>
+                        </div>
+                    </td>
                 </tr>
             @endforeach
         </tbody>
