@@ -32,4 +32,10 @@ class Cheque extends Model
     return $this->hasOne(Traite::class);
 }
 
+    public function notifications()
+{
+    return $this->hasMany(Notification::class);
+}
+
+
 }
