@@ -1,35 +1,63 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-3xl mx-auto p-6">
-    <h2 class="text-xl font-semibold mb-4">Liste des notifications</h2>
+<div class="p-6">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">🔔 Liste des notifications</h2>
 
-    @foreach ($notifications as $notif)
-        <div class="border p-3 mb-3 rounded {{ $notif->is_read ? 'bg-gray-100' : 'bg-yellow-100' }}">
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="font-medium">{{ $notif->message }}</p>
-                    <small class="text-gray-600">Type : {{ $notif->type }} • {{ $notif->created_at->diffForHumans() }}</small>
-                </div>
-                <div class="flex gap-2">
-                    @if (! $notif->is_read)
-                        <form method="POST" action="{{ route('notifications.markAsRead', $notif) }}">
+    @if($notifications->count())
+        <ul class="space-y-4">
+            @foreach($notifications as $notification)
+                <li class="p-4 border rounded bg-white shadow-sm flex justify-between items-start flex-col md:flex-row md:items-center">
+                    <div class="flex-1">
+                        {{-- 🔗 Lien vers la fiche du chèque --}}
+                        @if($notification->cheque)
+                            <a href="{{ $notification->cheque->type === 'entrant' 
+                                ? route('cheques.entrants.edit', $notification->cheque) 
+                                : route('cheques.sortants.edit', $notification->cheque) }}"
+                               class="text-blue-600 hover:underline font-semibold text-lg">
+                                📌 {{ $notification->message }}
+                            </a>
+                        @else
+                            <span class="text-gray-500 italic text-lg">{{ $notification->message }}</span>
+                        @endif
+                        
+                        <div class="text-sm text-gray-500 mt-1">
+                            Type : <span class="capitalize">{{ str_replace('_', ' ', $notification->type) }}</span> — 
+                            Date : {{ $notification->created_at->format('d/m/Y H:i') }}
+                        </div>
+                    </div>
+
+                    {{-- ✅ Boutons d'action --}}
+                    <div class="mt-4 md:mt-0 flex gap-3 items-center justify-end md:ml-6">
+                        @if(!$notification->is_read)
+                            <form action="{{ route('notifications.markAsRead', $notification) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-green-500 text-white text-sm px-4 py-2 rounded hover:bg-green-600 transition">
+                                    ✔️ Marquer comme lue
+                                </button>
+                            </form>
+                        @else
+                            <span class="text-sm text-gray-400">✅ Lue</span>
+                        @endif
+
+                        <form action="{{ route('notifications.destroy', $notification) }}" method="POST" onsubmit="return confirm('Supprimer cette notification ?');">
                             @csrf
-                            <button class="text-blue-600 text-sm hover:underline">Marquer comme lue</button>
+                            @method('DELETE')
+                            <button class="bg-red-500 text-white text-sm px-4 py-2 rounded hover:bg-red-600 transition">
+                                🗑 Supprimer
+                            </button>
                         </form>
-                    @endif
-                    <form method="POST" action="{{ route('notifications.destroy', $notif) }}">
-                        @csrf
-                        @method('DELETE')
-                        <button class="text-red-600 text-sm hover:underline" onclick="return confirm('Supprimer ?')">Supprimer</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    @endforeach
+                    </div>
+                </li>
+            @endforeach
+        </ul>
 
-    <div class="mt-4">
-        {{ $notifications->links() }}
-    </div>
+        {{-- Pagination --}}
+        <div class="mt-6">
+            {{ $notifications->links() }}
+        </div>
+    @else
+        <p class="text-gray-500 italic">Aucune notification pour le moment.</p>
+    @endif
 </div>
 @endsection

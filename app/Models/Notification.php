@@ -12,6 +12,6 @@ class Notification extends Model
 
     public function cheque()
     {
-        $this->belongsTo(cheque::class);
+       return $this->belongsTo(cheque::class);
     }
 }
