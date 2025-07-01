@@ -41,4 +41,34 @@ class ChequeSortantController extends Controller
         // Rediriger avec message de succès
         return redirect()->route('cheques.sortants.index')->with('success', 'Chèque sortant ajouté avec succès.');
     }
+    public function edit(Cheque $cheque)
+{
+    return view('cheques.sortants.edit', compact('cheque'));
+}
+
+public function update(Request $request, Cheque $cheque)
+{
+    $request->validate([
+        'numero' => 'required|unique:cheques,numero,'.$cheque->id,
+        'montant' => 'required|numeric',
+        'date_echeance' => 'required|date',
+        'banque' => 'required|string',
+        'tiers' => 'required|string',
+        'type' => 'required|in:entrant,sortant',
+        'statut' => 'required|in:en_attente,encaisse,paye,annule',
+    ]);
+
+    $cheque->update($request->all());
+
+    return redirect()->route('cheques.sortants.index')
+                    ->with('success', 'Chèque modifié avec succès');
+}
+
+public function destroy(Cheque $cheque)
+{
+    $cheque->delete();
+
+    return redirect()->route('cheques.sortants.index')
+                    ->with('success', 'Chèque supprimé avec succès');
+}
 }
