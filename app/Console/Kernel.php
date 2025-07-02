@@ -12,7 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('cheques:generer-notifications')->daily();
+        $schedule->command('cheques:generer-notifications')->dailyAt('08:00');
     }
 
     /**
