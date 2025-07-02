@@ -30,15 +30,21 @@
                     {{-- ✅ Boutons d'action --}}
                     <div class="mt-4 md:mt-0 flex gap-3 items-center justify-end md:ml-6">
                         @if(!$notification->is_read)
-                            <form action="{{ route('notifications.markAsRead', $notification) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="bg-green-500 text-white text-sm px-4 py-2 rounded hover:bg-green-600 transition">
-                                    ✔️ Marquer comme lue
-                                </button>
-                            </form>
-                        @else
-                            <span class="text-sm text-gray-400">✅ Lue</span>
-                        @endif
+              <form action="{{ route('notifications.markAsRead', $notification) }}" method="POST">
+               @csrf
+                     <button type="submit" class="bg-green-500 text-white text-sm px-4 py-2 rounded hover:bg-green-600 transition">
+                            ✔️ Marquer comme lue
+                   </button>
+             </form>
+        @else
+     <form action="{{ route('notifications.markAsUnread', $notification) }}" method="POST">
+        @csrf
+        <button type="submit" class="bg-yellow-500 text-white text-sm px-4 py-2 rounded hover:bg-yellow-600 transition">
+            📩 Marquer comme non lue
+        </button>
+           </form>
+            @endif
+
 
                         <form action="{{ route('notifications.destroy', $notification) }}" method="POST" onsubmit="return confirm('Supprimer cette notification ?');">
                             @csrf
