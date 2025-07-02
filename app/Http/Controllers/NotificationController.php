@@ -24,4 +24,20 @@ class NotificationController extends Controller
         $notification->delete();
         return back()->with('success','Notification supprimé');
     }
+
+    public function markAllAsRead()
+{
+    Notification::where('is_read', false)->update(['is_read' => true]);
+
+    return redirect()->back();
+}
+   public function markAsUnread(Notification $notification)
+{
+    $notification->is_read = false;
+    $notification->save();
+
+    return redirect()->back();
+}
+
+
 }
