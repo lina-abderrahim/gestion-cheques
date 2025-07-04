@@ -1,73 +1,110 @@
 @extends('layouts.app')
+
 @section('content')
-    {{-- ✅ Message flash de succès --}}
-    @if (session('success'))
-        <div id="flash-message" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
-            {{ session('success') }}
-
-            {{-- Bouton de fermeture manuelle --}}
-            <button onclick="this.parentElement.style.display='none'" class="absolute top-0 right-0 px-4 py-3">
-                <svg class="fill-current h-6 w-6 text-green-700" role="button" xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20">
-                    <title>Fermer</title>
-                    <path d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 001.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z"/>
-                </svg>
-            </button>
+<div class="bg-white rounded-lg shadow overflow-hidden">
+    <!-- En-tête avec recherche et boutons -->
+    <div class="px-6 py-4 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <h1 class="text-2xl font-bold text-gray-800">Gestion des Chèques</h1>
+        
+        <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3">
+            <!-- Barre de recherche -->
+            <form action="{{ route('cheques.entrants.index') }}" method="GET" class="flex-grow">
+                <div class="relative">
+                    <input type="text" name="search" value="{{ request('search') }}"
+                           class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                           placeholder="Rechercher...">
+                    <div class="absolute left-3 top-2.5 text-gray-400">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- Boutons d'action -->
+            <div class="flex gap-2">
+                <a href="{{ route('cheques.entrants.create') }}" 
+                   class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Entrant
+                </a>
+                <a href="{{ route('cheques.sortants.create') }}" 
+                   class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Sortant
+                </a>
+            </div>
         </div>
+    </div>
 
-        {{-- Script pour disparition automatique après 3 secondes --}}
-        <script>
-            setTimeout(() => {
-                const flash = document.getElementById('flash-message');
-                if (flash) flash.style.display = 'none';
-            }, 3000);
-        </script>
-    @endif
-    <div class="p-6">
-        <h2 class="text-xl font-semibold mb-4">Liste des chèques entrants</h2>
-
-        <a href="{{ route('cheques.entrants.create') }}" class="bg-green-500 text-white px-4 py-2 rounded">+ Ajouter</a>
-
-        <table class="w-full mt-4 border">
-            <thead>
-                <tr class="bg-gray-200 text-center">
-                    <th>Numéro</th>
-                    <th>Montant</th>
-                    <th>Banque</th>
-                    <th>Tiers</th>
-                    <th>Échéance</th>
-                    <th>Statut</th>
-                    <th>Actions</th> {{-- ✅ Nouvelle colonne --}}
+    <!-- Tableau des chèques -->
+    <div class="table-container">
+        <table class="min-w-full">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-6 py-3 text-left">Numéro</th>
+                    <th class="px-6 py-3 text-left">Montant</th>
+                    <th class="px-6 py-3 text-left">Date Échéance</th>
+                    <th class="px-6 py-3 text-left">Banque</th>
+                    <th class="px-6 py-3 text-left">Tiers</th>
+                    <th class="px-6 py-3 text-left">Statut</th>
+                    <th class="px-6 py-3 text-left">Type</th>
+                    <th class="px-6 py-3 text-left">Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach($cheques as $cheque)
-                    <tr class="text-center border-t">
-                        <td>{{ $cheque->numero }}</td>
-                        <td>{{ $cheque->montant }} DT</td>
-                        <td>{{ $cheque->banque }}</td>
-                        <td>{{ $cheque->tiers }}</td>
-                        <td>{{ $cheque->date_echeance }}</td>
-                        <td>{{ $cheque->statut }}</td>
-                        <td class="flex justify-center gap-2 py-2">
-                            {{-- 🔵 Modifier --}}
-                            <a href="{{ route('cheques.entrants.edit', $cheque) }}"
-                               class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                                Modifier
-                            </a>
-
-                            {{-- 🔴 Supprimer --}}
-                            <form action="{{ route('cheques.entrants.destroy', $cheque) }}" method="POST" onsubmit="return confirm('Confirmer la suppression ?')">
+            <tbody class="divide-y divide-gray-200">
+                @forelse ($cheques as $cheque)
+                <tr class="{{ $cheque->type === 'entrant' ? 'bg-green-50' : 'bg-red-50' }}">
+                    <td class="px-6 py-4">{{ $cheque->numero }}</td>
+                    <td class="px-6 py-4">{{ number_format($cheque->montant, 2) }} DH</td>
+                    <td class="px-6 py-4">{{ $cheque->date_echeance->format('d/m/Y') }}</td>
+                    <td class="px-6 py-4">{{ $cheque->banque }}</td>
+                    <td class="px-6 py-4">{{ $cheque->tiers }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                              {{ $cheque->statut === 'encaissé' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                            {{ $cheque->statut }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 capitalize">{{ $cheque->type }}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex gap-2">
+                            @if($cheque->type === 'entrant')
+                                <a href="{{ route('cheques.entrants.edit', $cheque) }}" 
+                                   class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            @else
+                                <a href="{{ route('cheques.sortants.edit', $cheque) }}" 
+                                   class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            @endif
+                            <form action="{{ $cheque->type === 'entrant' 
+                                          ? route('cheques.entrants.destroy', $cheque) 
+                                          : route('cheques.sortants.destroy', $cheque) }}" 
+                                  method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-                                    Supprimer
+                                <button type="submit" 
+                                        class="text-red-600 hover:text-red-800"
+                                        onclick="return confirm('Êtes-vous sûr ?')">
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                        </td>
-                    </tr>
-                @endforeach
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="8" class="px-6 py-4 text-center text-gray-500">
+                        Aucun chèque trouvé
+                    </td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination -->
+    <div class="px-6 py-4 border-t">
+        {{ $cheques->links() }}
+    </div>
+</div>
 @endsection
