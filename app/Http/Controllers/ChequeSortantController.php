@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cheque;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -39,6 +40,8 @@ class ChequeSortantController extends Controller
         // Enregistrer le chèque
         Cheque::create($validated);
 
+        Notification::checkAlertes();
+
         // Rediriger avec message de succès
         return redirect()->route('cheques.sortants.index')->with('success', 'Chèque sortant ajouté avec succès.');
     }
@@ -60,6 +63,13 @@ public function update(Request $request, Cheque $cheque)
     ]);
 
     $cheque->update($request->all());
+
+    Notification::checkAlertes();
+    Notification::where('cheque_id', $cheque->id)->update([
+    'type' => 'alerte_' . $cheque->type,
+    'message' => 'Chèque ' . $cheque->type . ' à échéance demain (n°' . $cheque->numero . ')',
+]);
+
 
     return redirect()->route('cheques.sortants.index')
                     ->with('success', 'Chèque modifié avec succès');

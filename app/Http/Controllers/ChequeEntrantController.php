@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cheque;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -41,6 +42,9 @@ class ChequeEntrantController extends Controller
             'user_id' => auth()->id(),
         ]);
 
+            Notification::checkAlertes();
+
+
         return redirect()->route('cheques.entrants.index')->with('success', 'Chèque entrant ajouté.');
     }
 
@@ -65,6 +69,13 @@ class ChequeEntrantController extends Controller
     ]);
 
     $cheque->update($request->all());
+
+    Notification::checkAlertes();
+    Notification::where('cheque_id', $cheque->id)->update([
+    'type' => 'alerte_' . $cheque->type,
+    'message' => 'Chèque ' . $cheque->type . ' à échéance aujourd\'hui (n°' . $cheque->numero . ')',
+]);
+
 
     return redirect()->route('cheques.entrants.index')->with('success', 'Chèque modifié avec succès.');
 }
