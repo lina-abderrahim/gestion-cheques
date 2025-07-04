@@ -57,7 +57,7 @@ class GenererNotificationsCheques extends Command
 
             if (! $existe) {
                 Notification::create([
-                    'message' => "📌 Échéance proche pour le chèque #{$cheque->numero} (entrant)",
+                    'message' => "📌 Chèque entrant à échéance demain #{$cheque->numero} (entrant)",
                     'type' => 'alerte_entrant',
                     'cheque_id' => $cheque->id,
                     'is_read' => false,
@@ -81,7 +81,7 @@ class GenererNotificationsCheques extends Command
 
             if (! $existe) {
                 Notification::create([
-                    'message' => "📌 Échéance aujourd'hui pour le chèque #{$cheque->numero} (sortant)",
+                    'message' => "📌 Chèque sortant à échéance aujourd'hui #{$cheque->numero}",
                     'type' => 'alerte_sortant',
                     'cheque_id' => $cheque->id,
                     'is_read' => false,

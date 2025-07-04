@@ -28,11 +28,11 @@ class Notification extends Model
     foreach ($chequesEntrants as $cheque) {
         $exists = Notification::where('cheque_id', $cheque->id)
             ->whereDate('created_at', now()->toDateString())
-            ->exists(); // ❗ne filtre plus par type
+            ->exists();
 
         if (!$exists) {
             Notification::create([
-                'message' => "Chèque entrant échéance proche (n°{$cheque->numero})",
+                'message' => "Chèque entrant à échéance demain (n°{$cheque->numero})",
                 'type' => 'alerte_entrant',
                 'cheque_id' => $cheque->id,
             ]);
@@ -47,7 +47,7 @@ class Notification extends Model
     foreach ($chequesSortants as $cheque) {
         $exists = Notification::where('cheque_id', $cheque->id)
             ->whereDate('created_at', now()->toDateString())
-            ->exists(); // ❗pareil ici
+            ->exists();
 
         if (!$exists) {
             Notification::create([
