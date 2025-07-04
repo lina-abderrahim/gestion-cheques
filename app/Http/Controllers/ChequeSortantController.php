@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cheque;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ChequeSortantController extends Controller
 {
@@ -70,5 +71,19 @@ public function destroy(Cheque $cheque)
 
     return redirect()->route('cheques.sortants.index')
                     ->with('success', 'Chèque supprimé avec succès');
+}
+public function search(Request $request)
+{
+    $query = $request->input('q');
+
+    $cheques = Cheque::where('type', 'sortant')
+        ->where(function ($q) use ($query) {
+            $q->where('numero', 'like', "%{$query}%")
+              ->orWhere('montant', 'like', "%{$query}%")
+              ->orWhere('tiers', 'like', "%{$query}%");
+        })
+        ->get();
+
+    return view('cheques.sortants.index', compact('cheques', 'query'));
 }
 }
