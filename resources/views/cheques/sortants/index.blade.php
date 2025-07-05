@@ -34,33 +34,34 @@
     </div>
 
     <!-- Tableau des chèques -->
-    <div class="table-container">
-        <table class="min-w-full">
+    <div class="table-container overflow-x-auto">
+        <table class="min-w-full border border-gray-300">
             <thead class="bg-gray-100">
                 <tr>
-                    <th class="px-6 py-3 text-left">Numéro</th>
-                    <th class="px-6 py-3 text-left">Montant</th>
-                    <th class="px-6 py-3 text-left">Date Échéance</th>
-                    <th class="px-6 py-3 text-left">Banque</th>
-                    <th class="px-6 py-3 text-left">Tiers</th>
-                    <th class="px-6 py-3 text-left">Statut</th>
-                    <th class="px-6 py-3 text-left">Type</th>
-                    <th class="px-6 py-3 text-left">Actions</th>
+                    <th class="px-6 py-3 text-left border-b">Numéro</th>
+                    <th class="px-6 py-3 text-left border-b">Montant</th>
+                    <th class="px-6 py-3 text-left border-b">Date Échéance</th>
+                    <th class="px-6 py-3 text-left border-b">Banque</th>
+                    <th class="px-6 py-3 text-left border-b">Tiers</th>
+                    <th class="px-6 py-3 text-left border-b">Statut</th>
+                    <th class="px-6 py-3 text-left border-b">Type</th>
+                    <th class="px-6 py-3 text-left border-b">Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
                 @forelse ($cheques as $cheque)
-                <tr class="{{ $cheque->type === 'entrant' ? 'bg-green-50' : 'bg-red-50' }} 
-                 @if(request('search') && $cheque->numero == request('search')) ring-2 ring-yellow-400">
-
+                <tr class="{{ 
+                    ($cheque->type === 'entrant' ? 'bg-green-50' : 'bg-red-50') . 
+                    (request('search') && str_contains($cheque->numero, request('search')) ? ' ring-2 ring-yellow-400' : '') 
+                }}">
                     <td class="px-6 py-4">{{ $cheque->numero }}</td>
-                    <td class="px-6 py-4">{{ number_format($cheque->montant, 2) }} DH</td>
+                    <td class="px-6 py-4">{{ number_format($cheque->montant, 2) }} DT</td>
                     <td class="px-6 py-4">{{ $cheque->date_echeance->format('d/m/Y') }}</td>
                     <td class="px-6 py-4">{{ $cheque->banque }}</td>
                     <td class="px-6 py-4">{{ $cheque->tiers }}</td>
                     <td class="px-6 py-4">
                         <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                              {{ $cheque->statut === 'encaissé' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                            {{ $cheque->statut === 'encaissé' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                             {{ $cheque->statut }}
                         </span>
                     </td>
@@ -69,24 +70,23 @@
                         <div class="flex gap-2">
                             @if($cheque->type === 'entrant')
                                 <a href="{{ route('cheques.entrants.edit', $cheque) }}" 
-                                   class="text-blue-600 hover:text-blue-800">
+                                   class="text-blue-600 hover:text-blue-800" title="Modifier">
                                     <i class="fas fa-edit"></i>
                                 </a>
                             @else
                                 <a href="{{ route('cheques.sortants.edit', $cheque) }}" 
-                                   class="text-blue-600 hover:text-blue-800">
+                                   class="text-blue-600 hover:text-blue-800" title="Modifier">
                                     <i class="fas fa-edit"></i>
                                 </a>
                             @endif
                             <form action="{{ $cheque->type === 'entrant' 
                                           ? route('cheques.entrants.destroy', $cheque) 
                                           : route('cheques.sortants.destroy', $cheque) }}" 
-                                  method="POST">
+                                  method="POST" onsubmit="return confirm('Êtes-vous sûr ?')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" 
-                                        class="text-red-600 hover:text-red-800"
-                                        onclick="return confirm('Êtes-vous sûr ?')">
+                                        class="text-red-600 hover:text-red-800" title="Supprimer">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
@@ -106,7 +106,7 @@
 
     <!-- Pagination -->
     <div class="px-6 py-4 border-t">
-        {{ $cheques->links() }}
+        {{ $cheques->appends(request()->query())->links() }}
     </div>
 </div>
 @endsection

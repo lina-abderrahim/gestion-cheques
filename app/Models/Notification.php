@@ -2,61 +2,46 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Notification extends Model
 {
-    use HasFactory;
-    protected $fillable=['message','type','cheque_id','is_read'];
+    protected $fillable = [
+        'cheque_id',
+        'type',
+        'message',
+        'is_read',
+    ];
 
     public function cheque()
     {
-       return $this->belongsTo(cheque::class);
+        return $this->belongsTo(Cheque::class);
     }
 
     public static function checkAlertes()
-{
-    $delaiEntrant = 1;
-    $delaiSortant = 0;
+    {
+        $date = now()->toDateString();
 
-    // 🔔 Entrants
-    $chequesEntrants = Cheque::where('type', 'entrant')
-        ->whereDate('date_echeance', now()->addDays($delaiEntrant))
-        ->get();
+        $chequesEntrants = Cheque::where('type', 'entrant')
+            ->whereDate('date_echeance', now()->addDay())
+            ->get();
 
-    foreach ($chequesEntrants as $cheque) {
-        $exists = Notification::where('cheque_id', $cheque->id)
-            ->whereDate('created_at', now()->toDateString())
-            ->exists(); // ❗ne filtre plus par type
+        foreach ($chequesEntrants as $cheque) {
+            static::updateOrCreate(
+                ['cheque_id' => $cheque->id, 'type' => 'alerte_entrant'],
+                ['message' => 'Chèque entrant à échéance demain (n°' . $cheque->numero . ')', 'is_read' => false]
+            );
+        }
 
-        if (!$exists) {
-            Notification::create([
-                'message' => "Chèque entrant échéance proche (n°{$cheque->numero})",
-                'type' => 'alerte_entrant',
-                'cheque_id' => $cheque->id,
-            ]);
+        $chequesSortants = Cheque::where('type', 'sortant')
+            ->whereDate('date_echeance', now())
+            ->get();
+
+        foreach ($chequesSortants as $cheque) {
+            static::updateOrCreate(
+                ['cheque_id' => $cheque->id, 'type' => 'alerte_sortant'],
+                ['message' => 'Chèque sortant à échéance aujourd’hui (n°' . $cheque->numero . ')', 'is_read' => false]
+            );
         }
     }
-
-    // 🔔 Sortants
-    $chequesSortants = Cheque::where('type', 'sortant')
-        ->whereDate('date_echeance', now()->addDays($delaiSortant))
-        ->get();
-
-    foreach ($chequesSortants as $cheque) {
-        $exists = Notification::where('cheque_id', $cheque->id)
-            ->whereDate('created_at', now()->toDateString())
-            ->exists(); // ❗pareil ici
-
-        if (!$exists) {
-            Notification::create([
-                'message' => "Chèque sortant à échéance aujourd'hui (n°{$cheque->numero})",
-                'type' => 'alerte_sortant',
-                'cheque_id' => $cheque->id,
-            ]);
-        }
-    }
-}
-
 }

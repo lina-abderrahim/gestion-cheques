@@ -52,7 +52,7 @@
                 @forelse ($cheques as $cheque)
                 <tr class="{{ $cheque->type === 'entrant' ? 'bg-green-50' : 'bg-red-50' }}">
                     <td class="px-6 py-4">{{ $cheque->numero }}</td>
-                    <td class="px-6 py-4">{{ number_format($cheque->montant, 2) }} DH</td>
+                    <td class="px-6 py-4">{{ number_format($cheque->montant, 2) }} DT</td>
                     <td class="px-6 py-4">{{ $cheque->date_echeance->format('d/m/Y') }}</td>
                     <td class="px-6 py-4">{{ $cheque->banque }}</td>
                     <td class="px-6 py-4">{{ $cheque->tiers }}</td>
