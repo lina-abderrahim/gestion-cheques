@@ -1,3 +1,6 @@
+
+
+
 @extends('layouts.app')
 
 @section('content')
@@ -26,6 +29,11 @@
         @endif
     </form>
 </div>
+@if(isset($nbNotifsNonLues) && $nbNotifsNonLues > 0)
+    <div class="mb-4 p-2 bg-yellow-200 text-yellow-900 rounded font-semibold">
+        Vous avez {{ $nbNotifsNonLues }} notification(s) non lue(s).
+    </div>
+@endif
 
 {{-- Boutons d’action --}}
 <div class="flex justify-end gap-4 mb-6">
