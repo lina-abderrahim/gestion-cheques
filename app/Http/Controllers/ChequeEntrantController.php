@@ -90,9 +90,9 @@ class ChequeEntrantController extends Controller
         $type = $cheque->type;
         $numero = $cheque->numero;
         $message = match($type) {
-    'entrant' => "Chèque entrant à échéance demain (n°$numero)",
-    'sortant' => "Chèque sortant à échéance aujourd'hui (n°$numero)",
-    default   => "Chèque mis à jour (n°$numero)",};
+    'entrant' => "📌Chèque entrant à échéance demain (n°$numero)",
+    'sortant' => "📌Chèque sortant à échéance aujourd'hui (n°$numero)",
+    default   => "📌Chèque mis à jour (n°$numero)",};
     
     Notification::updateOrCreate(
     ['cheque_id' => $cheque->id],
