@@ -8,10 +8,24 @@ use Illuminate\Http\Request;
 
 class ChequeSortantController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cheques = Cheque::where('type', 'sortant')->orderByDesc('created_at')->get();
-        return view('cheques.sortants.index', compact('cheques'));
+        $search = $request->input('search');
+
+        $query = Cheque::where('type', 'sortant')->orderByDesc('created_at');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('numero', 'like', "%{$search}%")
+                  ->orWhere('montant', 'like', "%{$search}%")
+                  ->orWhere('tiers', 'like', "%{$search}%")
+                  ->orWhere('banque', 'like', "%{$search}%");
+            });
+        }
+
+        $cheques = $query->paginate(10)->withQueryString();
+
+        return view('cheques.sortants.index', compact('cheques', 'search'));
     }
 
     public function create()
@@ -21,7 +35,6 @@ class ChequeSortantController extends Controller
 
     public function store(Request $request)
     {
-        // Valider les données du formulaire
         $validated = $request->validate([
             'numero' => 'required|unique:cheques',
             'montant' => 'required|numeric',
@@ -31,54 +44,81 @@ class ChequeSortantController extends Controller
             'commentaire' => 'nullable|string',
         ]);
 
-        // Ajouter les champs fixes
         $validated['type'] = 'sortant';
         $validated['statut'] = 'en_attente';
         $validated['user_id'] = auth()->id();
 
-        // Enregistrer le chèque
-        Cheque::create($validated);
+        $cheque = Cheque::create($validated);
 
-        Notification::checkAlertes();
+        Notification::create([
+            'cheque_id' => $cheque->id,
+            'type' => 'alerte_sortant',
+            'message' => 'chéque sortant à écheance aujourd\'hui  (n°' . $cheque->numero . ')',
+            'is_read' => false,
+        ]);
 
-        // Rediriger avec message de succès
         return redirect()->route('cheques.sortants.index')->with('success', 'Chèque sortant ajouté avec succès.');
     }
-    public function edit(Cheque $cheque)
-{
-    return view('cheques.sortants.edit', compact('cheque'));
-}
 
-public function update(Request $request, Cheque $cheque)
-{
-    $request->validate([
-        'numero' => 'required|unique:cheques,numero,'.$cheque->id,
-        'montant' => 'required|numeric',
-        'date_echeance' => 'required|date',
-        'banque' => 'required|string',
-        'tiers' => 'required|string',
-        'type' => 'required|in:entrant,sortant',
-        'statut' => 'required|in:en_attente,encaisse,paye,annule',
+    public function edit(Cheque $cheque)
+    {
+        return view('cheques.sortants.edit', compact('cheque'));
+    }
+
+    public function update(Request $request, Cheque $cheque)
+    {
+        $request->validate([
+            'numero' => 'required|unique:cheques,numero,' . $cheque->id,
+            'montant' => 'required|numeric',
+            'date_echeance' => 'required|date',
+            'banque' => 'required|string',
+            'tiers' => 'required|string',
+            'type' => 'required|in:entrant,sortant',
+            'statut' => 'required|in:en_attente,encaisse,paye,annule',
+        ]);
+
+        $cheque->update($request->all());
+
+                $type = $cheque->type;
+        $numero = $cheque->numero;
+        $message = match($type) {
+    'entrant' => "Chèque entrant à échéance demain (n°$numero)",
+    'sortant' => "Chèque sortant à échéance aujourd'hui (n°$numero)",
+    default   => "Chèque mis à jour (n°$numero)",};
+    
+    Notification::updateOrCreate(
+    ['cheque_id' => $cheque->id],
+    [
+        'type' => 'alerte_' . $type,
+        'message' => $message,
+        'is_read' => false,
     ]);
 
-    $cheque->update($request->all());
+        return redirect()->route('cheques.sortants.index')->with('success', 'Chèque modifié avec succès.');
+    }
 
-    Notification::checkAlertes();
-    Notification::where('cheque_id', $cheque->id)->update([
-    'type' => 'alerte_' . $cheque->type,
-    'message' => 'Chèque ' . $cheque->type . ' à échéance demain (n°' . $cheque->numero . ')',
-]);
+    public function destroy(Cheque $cheque)
+    {
+        Notification::where('cheque_id', $cheque->id)->delete();
+        $cheque->delete();
 
+        return redirect()->route('cheques.sortants.index')->with('success', 'Chèque supprimé avec succès.');
+    }
 
-    return redirect()->route('cheques.sortants.index')
-                    ->with('success', 'Chèque modifié avec succès');
-}
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
 
-public function destroy(Cheque $cheque)
-{
-    $cheque->delete();
+        $cheques = Cheque::where('type', 'sortant')
+            ->where(function ($q) use ($query) {
+                $q->where('numero', 'like', "%{$query}%")
+                  ->orWhere('montant', 'like', "%{$query}%")
+                  ->orWhere('tiers', 'like', "%{$query}%")
+                  ->orWhere('banque', 'like', "%{$query}%");
+            })
+            ->paginate(10)
+            ->withQueryString();
 
-    return redirect()->route('cheques.sortants.index')
-                    ->with('success', 'Chèque supprimé avec succès');
-}
+        return view('cheques.sortants.index', compact('cheques', 'query'));
+    }
 }

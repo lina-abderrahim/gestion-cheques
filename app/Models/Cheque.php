@@ -9,6 +9,12 @@ use App\Models\Traite;
 class Cheque extends Model
 {
     use HasFactory;
+
+
+    protected $casts = [
+        'date_echeance' => 'date',
+    ];
+    
     protected $fillable = [
         'numero',
         'montant',

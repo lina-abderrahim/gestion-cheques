@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Notification;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer('partials.navbar', function ($view) {
+            $nbNotifsNonLues = Notification::where('is_read', false)->count();
+            $view->with('nbNotifsNonLues', $nbNotifsNonLues);
+        });
     }
 }
