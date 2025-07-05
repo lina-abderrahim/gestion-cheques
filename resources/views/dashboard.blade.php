@@ -1,6 +1,3 @@
-
-
-
 @extends('layouts.app')
 
 @section('content')
@@ -17,7 +14,7 @@
         <input type="text" 
                name="search" 
                class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500"
-               placeholder="Rechercher par numéro, montant, tiers, banque..."
+               placeholder="Rechercher par numéro, montant, tiers, banque, commentaire..."
                value="{{ request('search') }}">
         <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded">
             🔍 Rechercher
@@ -29,6 +26,7 @@
         @endif
     </form>
 </div>
+
 @if(isset($nbNotifsNonLues) && $nbNotifsNonLues > 0)
     <div class="mb-4 p-2 bg-yellow-200 text-yellow-900 rounded font-semibold">
         Vous avez {{ $nbNotifsNonLues }} notification(s) non lue(s).
@@ -57,6 +55,7 @@
                 <th class="border px-6 py-3">Tiers</th>
                 <th class="border px-6 py-3">Statut</th>
                 <th class="border px-6 py-3">Type</th>
+                <th class="border px-6 py-3">Commentaire</th> 
                 <th class="border px-6 py-3">Actions</th>
             </tr>
         </thead>
@@ -68,7 +67,8 @@
                         Str::contains(strtolower($cheque->numero), $search) ||
                         Str::contains(strtolower($cheque->montant), $search) ||
                         Str::contains(strtolower($cheque->tiers), $search) ||
-                        Str::contains(strtolower($cheque->banque), $search)
+                        Str::contains(strtolower($cheque->banque), $search) ||
+                        Str::contains(strtolower($cheque->commentaire ?? ''), $search)
                     );
                 @endphp
 
@@ -80,6 +80,9 @@
                     <td class="px-6 py-4">{!! $match ? highlightText($cheque->tiers, $search) : e($cheque->tiers) !!}</td>
                     <td class="px-6 py-4">{{ $cheque->statut }}</td>
                     <td class="px-6 py-4">{{ $cheque->type }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-700 italic">
+                        {!! $match ? highlightText($cheque->commentaire ?? '', $search) : e($cheque->commentaire ?? '—') !!}
+                    </td>
                     <td class="px-6 py-4 flex gap-3">
                         @if($cheque->type === 'entrant')
                             <a href="{{ route('cheques.entrants.edit', $cheque) }}" class="text-blue-600 hover:underline">Modifier</a>

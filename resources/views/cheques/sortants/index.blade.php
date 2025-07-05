@@ -45,6 +45,7 @@
                     <th class="px-6 py-3 text-left border-b">Tiers</th>
                     <th class="px-6 py-3 text-left border-b">Statut</th>
                     <th class="px-6 py-3 text-left border-b">Type</th>
+                    <th class="px-6 py-3 text-left">Commentaire</th> 
                     <th class="px-6 py-3 text-left border-b">Actions</th>
                 </tr>
             </thead>
