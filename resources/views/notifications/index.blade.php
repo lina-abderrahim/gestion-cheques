@@ -15,7 +15,7 @@
                                 ? route('cheques.entrants.edit', $notification->cheque) 
                                 : route('cheques.sortants.edit', $notification->cheque) }}"
                                class="text-blue-600 hover:underline font-semibold text-lg">
-                                📌 {{ $notification->message }}
+                                {{ $notification->message }}
                             </a>
                         @else
                             <span class="text-gray-500 italic text-lg">{{ $notification->message }}</span>

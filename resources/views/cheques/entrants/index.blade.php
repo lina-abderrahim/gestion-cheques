@@ -4,7 +4,7 @@
 <div class="bg-white rounded-lg shadow overflow-hidden">
     <!-- En-tête avec recherche et boutons -->
     <div class="px-6 py-4 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h1 class="text-2xl font-bold text-gray-800">Gestion des Chèques</h1>
+        <h1 class="text-2xl font-bold text-gray-800">Gestion des Chèques entrants</h1>
         
         <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3">
             <!-- Barre de recherche -->

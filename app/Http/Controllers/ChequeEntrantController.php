@@ -58,7 +58,7 @@ class ChequeEntrantController extends Controller
         Notification::create([
             'cheque_id' => $cheque->id,
             'type' => 'alerte_entrant',
-            'message' => 'Chèque entrant ajouté (n°' . $cheque->numero . ')',
+            'message' => 'Chèque entrant à écheance demain (n°' . $cheque->numero . ')',
             'is_read' => false,
         ]);
 
@@ -87,14 +87,21 @@ class ChequeEntrantController extends Controller
 
         $cheque->update($request->all());
 
-        Notification::updateOrCreate(
-            ['cheque_id' => $cheque->id],
-            [
-                'type' => 'alerte_' . $cheque->type,
-                'message' => 'Chèque ' . $cheque->type . ' mis à jour (n°' . $cheque->numero . ')',
-                'is_read' => false,
-            ]
-        );
+        $type = $cheque->type;
+        $numero = $cheque->numero;
+        $message = match($type) {
+    'entrant' => "Chèque entrant à échéance demain (n°$numero)",
+    'sortant' => "Chèque sortant à échéance aujourd'hui (n°$numero)",
+    default   => "Chèque mis à jour (n°$numero)",};
+    
+    Notification::updateOrCreate(
+    ['cheque_id' => $cheque->id],
+    [
+        'type' => 'alerte_' . $type,
+        'message' => $message,
+        'is_read' => false,
+    ]);
+
 
         return redirect()->route('cheques.entrants.index')->with('success', 'Chèque modifié avec succès.');
     }

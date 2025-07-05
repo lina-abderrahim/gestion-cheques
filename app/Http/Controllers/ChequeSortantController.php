@@ -53,7 +53,7 @@ class ChequeSortantController extends Controller
         Notification::create([
             'cheque_id' => $cheque->id,
             'type' => 'alerte_sortant',
-            'message' => 'Nouveau chèque sortant ajouté (n°' . $cheque->numero . ')',
+            'message' => 'chéque sortant à écheance aujourd\'hui  (n°' . $cheque->numero . ')',
             'is_read' => false,
         ]);
 
@@ -79,14 +79,20 @@ class ChequeSortantController extends Controller
 
         $cheque->update($request->all());
 
-        Notification::updateOrCreate(
-            ['cheque_id' => $cheque->id],
-            [
-                'type' => 'alerte_' . $cheque->type,
-                'message' => 'Chèque ' . $cheque->type . ' modifié (n°' . $cheque->numero . ')',
-                'is_read' => false,
-            ]
-        );
+                $type = $cheque->type;
+        $numero = $cheque->numero;
+        $message = match($type) {
+    'entrant' => "Chèque entrant à échéance demain (n°$numero)",
+    'sortant' => "Chèque sortant à échéance aujourd'hui (n°$numero)",
+    default   => "Chèque mis à jour (n°$numero)",};
+    
+    Notification::updateOrCreate(
+    ['cheque_id' => $cheque->id],
+    [
+        'type' => 'alerte_' . $type,
+        'message' => $message,
+        'is_read' => false,
+    ]);
 
         return redirect()->route('cheques.sortants.index')->with('success', 'Chèque modifié avec succès.');
     }

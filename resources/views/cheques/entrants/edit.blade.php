@@ -27,7 +27,7 @@
         {{-- Échéance --}}
         <div>
             <label class="block text-sm font-medium text-gray-700">Date d’échéance</label>
-            <input type="date" name="date_echeance" value="{{ old('date_echeance', $cheque->date_echeance) }}" required
+            <input type="date" name="date_echeance" value="{{ old('date_echeance', $cheque->date_echeance->format('Y-m-d')) }}" required
                 class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-green-200">
         </div>
 

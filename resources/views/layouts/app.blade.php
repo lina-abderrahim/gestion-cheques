@@ -1,3 +1,13 @@
+@php
+    use App\Models\Notification;
+    use App\Services\NotificationService;
+    NotificationService::synchroniser();
+    $latestNotifs = Notification::where('is_read', false)
+        ->latest()
+        ->take(5)
+        ->get();
+@endphp
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>

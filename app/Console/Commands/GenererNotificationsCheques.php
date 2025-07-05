@@ -23,14 +23,19 @@ class GenererNotificationsCheques extends Command
             ->get();
 
         foreach ($chequesEntrants as $cheque) {
-            Notification::updateOrCreate(
-                ['cheque_id' => $cheque->id],
-                [
+            $existe = Notification::where('cheque_id', $cheque->id)
+                ->where('type', 'alerte_entrant')
+                ->whereDate('created_at', $today)
+                ->exists();
+
+            if (! $existe) {
+                Notification::create([
+                    'cheque_id' => $cheque->id,
                     'type' => 'alerte_entrant',
                     'message' => 'Chèque entrant à échéance demain (n°' . $cheque->numero . ')',
                     'is_read' => false,
-                ]
-            );
+                ]);
+            }
         }
 
         // ✅ Chèques sortants : échéance AUJOURD'HUI
@@ -39,14 +44,19 @@ class GenererNotificationsCheques extends Command
             ->get();
 
         foreach ($chequesSortants as $cheque) {
-            Notification::updateOrCreate(
-                ['cheque_id' => $cheque->id],
-                [
+            $existe = Notification::where('cheque_id', $cheque->id)
+                ->where('type', 'alerte_sortant')
+                ->whereDate('created_at', $today)
+                ->exists();
+
+            if (! $existe) {
+                Notification::create([
+                    'cheque_id' => $cheque->id,
                     'type' => 'alerte_sortant',
                     'message' => 'Chèque sortant à échéance aujourd\'hui (n°' . $cheque->numero . ')',
                     'is_read' => false,
-                ]
-            );
+                ]);
+            }
         }
 
         $this->info('✅ Notifications générées avec succès.');

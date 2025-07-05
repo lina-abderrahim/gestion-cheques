@@ -18,7 +18,7 @@
 
         {{-- Échéance --}}
         <label class="block mb-2">Date d’échéance :</label>
-        <input type="date" name="date_echeance" class="w-full border p-2 mb-4" value="{{ old('date_echeance', $cheque->date_echeance) }}" required>
+        <input type="date" name="date_echeance" class="w-full border p-2 mb-4" value="{{ old('date_echeance', $cheque->date_echeance->format('Y-m-d')) }}" required>
 
         {{-- Banque --}}
         <label class="block mb-2">Banque :</label>
@@ -28,10 +28,6 @@
         <label class="block mb-2">Tiers :</label>
         <input type="text" name="tiers" class="w-full border p-2 mb-4" value="{{ old('tiers', $cheque->tiers) }}" required>
 
-        {{-- Commentaire --}}
-        <label class="block mb-2">Commentaire :</label>
-        <textarea name="commentaire" class="w-full border p-2 mb-4">{{ old('commentaire', $cheque->commentaire) }}</textarea>
-
         {{-- Type --}}
         <label class="block mb-2">Type :</label>
         <select name="type" class="w-full border p-2 mb-4" required>
@@ -39,7 +35,7 @@
             <option value="sortant" {{ old('type', $cheque->type) == 'sortant' ? 'selected' : '' }}>Sortant</option>
         </select>
 
-        {{-- Statut --}}
+                {{-- Statut --}}
         <label class="block mb-2">Statut :</label>
         <select name="statut" class="w-full border p-2 mb-4" required>
             <option value="en_attente" {{ old('statut', $cheque->statut) == 'en_attente' ? 'selected' : '' }}>En attente</option>
@@ -47,6 +43,10 @@
             <option value="paye" {{ old('statut', $cheque->statut) == 'paye' ? 'selected' : '' }}>Payé</option>
             <option value="annule" {{ old('statut', $cheque->statut) == 'annule' ? 'selected' : '' }}>Annulé</option>
         </select>
+
+        {{-- Commentaire --}}
+        <label class="block mb-2">Commentaire :</label>
+        <textarea name="commentaire" class="w-full border p-2 mb-4">{{ old('commentaire', $cheque->commentaire) }}</textarea>
 
         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Modifier</button>
     </form>
