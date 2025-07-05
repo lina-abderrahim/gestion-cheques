@@ -34,7 +34,7 @@
     </div>
 
     <!-- Tableau des chèques -->
-    <div class="table-container">
+    <div class="table-container overflow-x-auto">
         <table class="min-w-full">
             <thead class="bg-gray-100">
                 <tr>
@@ -44,13 +44,13 @@
                     <th class="px-6 py-3 text-left">Banque</th>
                     <th class="px-6 py-3 text-left">Tiers</th>
                     <th class="px-6 py-3 text-left">Statut</th>
-                    <th class="px-6 py-3 text-left">Type</th>
+                    <th class="px-6 py-3 text-left">Commentaire</th> 
                     <th class="px-6 py-3 text-left">Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
                 @forelse ($cheques as $cheque)
-                <tr class="{{ $cheque->type === 'entrant' ? 'bg-green-50' : 'bg-red-50' }}">
+                <tr class="bg-green-50">
                     <td class="px-6 py-4">{{ $cheque->numero }}</td>
                     <td class="px-6 py-4">{{ number_format($cheque->montant, 2) }} DT</td>
                     <td class="px-6 py-4">{{ $cheque->date_echeance->format('d/m/Y') }}</td>
@@ -58,33 +58,24 @@
                     <td class="px-6 py-4">{{ $cheque->tiers }}</td>
                     <td class="px-6 py-4">
                         <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                              {{ $cheque->statut === 'encaissé' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                            {{ $cheque->statut === 'encaisse' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                             {{ $cheque->statut }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 capitalize">{{ $cheque->type }}</td>
+                    <td class="px-6 py-4">
+                        {{ $cheque->commentaire ?? '—' }}
+                    </td>
                     <td class="px-6 py-4">
                         <div class="flex gap-2">
-                            @if($cheque->type === 'entrant')
-                                <a href="{{ route('cheques.entrants.edit', $cheque) }}" 
-                                   class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            @else
-                                <a href="{{ route('cheques.sortants.edit', $cheque) }}" 
-                                   class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            @endif
-                            <form action="{{ $cheque->type === 'entrant' 
-                                          ? route('cheques.entrants.destroy', $cheque) 
-                                          : route('cheques.sortants.destroy', $cheque) }}" 
-                                  method="POST">
+                            <a href="{{ route('cheques.entrants.edit', $cheque) }}" 
+                               class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('cheques.entrants.destroy', $cheque) }}" 
+                                  method="POST" onsubmit="return confirm('Supprimer ce chèque ?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" 
-                                        class="text-red-600 hover:text-red-800"
-                                        onclick="return confirm('Êtes-vous sûr ?')">
+                                <button type="submit" class="text-red-600 hover:text-red-800">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
