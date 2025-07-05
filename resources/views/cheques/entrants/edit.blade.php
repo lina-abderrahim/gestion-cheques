@@ -15,16 +15,7 @@
                 class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-green-200">
         </div>
 
-        {{-- Type --}}
-
-        <div>
-    <label class="block text-sm font-medium text-gray-700">Type</label>
-    <select name="type" class="mt-1 block w-full rounded border-gray-300 shadow-sm">
-        <option value="entrant" {{ old('type', $cheque->type) == 'entrant' ? 'selected' : '' }}>Entrant</option>
-        <option value="sortant" {{ old('type', $cheque->type) == 'sortant' ? 'selected' : '' }}>Sortant</option>
-    </select>
-</div>
-
+     
 
         {{-- Montant --}}
         <div>
@@ -36,7 +27,7 @@
         {{-- Échéance --}}
         <div>
             <label class="block text-sm font-medium text-gray-700">Date d’échéance</label>
-            <input type="date" name="date_echeance" value="{{ old('date_echeance', $cheque->date_echeance) }}" required
+            <input type="date" name="date_echeance" value="{{ old('date_echeance', $cheque->date_echeance->format('Y-m-d')) }}" required
                 class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-green-200">
         </div>
 
@@ -53,6 +44,16 @@
             <input type="text" name="tiers" value="{{ old('tiers', $cheque->tiers) }}" required
                 class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring focus:ring-green-200">
         </div>
+           {{-- Type --}}
+
+           <div>
+            <label class="block text-sm font-medium text-gray-700">Type</label>
+            <select name="type" class="mt-1 block w-full rounded border-gray-300 shadow-sm">
+                <option value="entrant" {{ old('type', $cheque->type) == 'entrant' ? 'selected' : '' }}>Entrant</option>
+                <option value="sortant" {{ old('type', $cheque->type) == 'sortant' ? 'selected' : '' }}>Sortant</option>
+            </select>
+        </div>
+        
 
        {{-- statut --}}
 

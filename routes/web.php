@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ChequeEntrantController;
+use App\Http\Controllers\ChequeSortantController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,7 +44,19 @@ use App\Http\Controllers\DashboardController;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 });
+// Pour les chèques entrants
+Route::get('/cheques/entrants/recherche', [App\Http\Controllers\ChequeEntrantController::class, 'search'])->name('cheques.entrants.search');
+
+// Pour les chèques sortants
+Route::get('/cheques/sortants/recherche', [App\Http\Controllers\ChequeSortantController::class, 'search'])->name('cheques.sortants.search');
+
+// Pour les entrants
+Route::resource('cheques/entrants', ChequeEntrantController::class)->names('cheques.entrants');
+
+// Pour les sortants
+Route::resource('cheques/sortants', ChequeSortantController::class)->names('cheques.sortants');
 
 
 require __DIR__.'/auth.php';

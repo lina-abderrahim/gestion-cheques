@@ -21,6 +21,7 @@
             <div class="mb-4">
                 <label>Banque :</label>
                 <input name="banque" class="w-full border p-2" required>
+                
             </div>
             <div class="mb-4">
                 <label>Tiers :</label>
