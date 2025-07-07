@@ -40,4 +40,28 @@ public function imprimer(Cheque $cheque)
     return $pdf->download($nomFichier);
 }
 
+
+public function printView(Cheque $cheque)
+{
+    if ($cheque->type !== 'sortant') {
+        abort(403, 'Seuls les chèques sortants peuvent être imprimés.');
+    }
+
+    // Vérifier si une traite existe déjà
+    if (!$cheque->traite) {
+        // Générer un nom de fichier PDF même si pas réellement généré ici
+        $nomFichier = 'traite_cheque_' . $cheque->numero . '_' . now()->format('Ymd_His') . '.pdf';
+        $chemin = 'traites/' . $nomFichier;
+
+        Traite::create([
+            'cheque_id' => $cheque->id,
+            'date_impression' => Carbon::now(),
+            'fichier_pdf' => $chemin,
+        ]);
+    }
+
+    return view('cheques.traite_print', compact('cheque'));
 }
+
+}
+

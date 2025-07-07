@@ -62,8 +62,9 @@ Route::get('/cheques/{cheque}/traite', [TraiteController::class, 'imprimer'])
     ->name('cheques.traite')
     ->middleware(['auth']);
 
+Route::get('/cheques/{cheque}/impression-directe', [TraiteController::class, 'printView'])
+    ->name('cheques.impression_directe');
 
-    
 
 require __DIR__.'/auth.php';
 

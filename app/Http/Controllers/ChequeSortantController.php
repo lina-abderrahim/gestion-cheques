@@ -121,9 +121,4 @@ class ChequeSortantController extends Controller
 
         return view('cheques.sortants.index', compact('cheques', 'query'));
     }
-
-    public function printView(Cheque $cheque)
-{
-    return view('cheques.traite_print', compact('cheque'));
-}
 }

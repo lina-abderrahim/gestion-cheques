@@ -10,7 +10,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cheques-sortants/{cheque}/edit', [ChequeSortantController::class, 'edit'])->name('cheques.sortants.edit');
     Route::put('/cheques-sortants/{cheque}', [ChequeSortantController::class, 'update'])->name('cheques.sortants.update');
     Route::delete('/cheques-sortants/{cheque}', [ChequeSortantController::class, 'destroy'])->name('cheques.sortants.destroy');
-    Route::get('/cheques/{cheque}/impression-directe', [ChequeSortantController::class, 'printView'])
-    ->name('cheques.impression_directe');
 
 });
