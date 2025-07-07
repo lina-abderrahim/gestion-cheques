@@ -79,6 +79,11 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
+                            <a href="{{ route('cheques.impression_directe', $cheque) }}"
+   class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700" target="_blank">
+   🖨️ Impression directe
+</a>
+
                         </div>
                     </td>
                 </tr>

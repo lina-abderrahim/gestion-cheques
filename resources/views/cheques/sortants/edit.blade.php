@@ -47,7 +47,9 @@
         {{-- Commentaire --}}
         <label class="block mb-2">Commentaire :</label>
         <textarea name="commentaire" class="w-full border p-2 mb-4">{{ old('commentaire', $cheque->commentaire) }}</textarea>
-
+        
+        <a href="{{ route('cheques.traite', $cheque) }}"
+        class="inline-block bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"target="_blank">📄 Imprimer la traite</a>
         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Modifier</button>
     </form>
 </div>
