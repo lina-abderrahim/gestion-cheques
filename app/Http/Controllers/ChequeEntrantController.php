@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cheque;
+use App\Models\Log;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 
@@ -62,6 +63,12 @@ class ChequeEntrantController extends Controller
             'is_read' => false,
         ]);
 
+        Log::enregistrer(auth()->id(), 'Création chèque entrant', 'cheque', [
+    'numero' => $cheque->numero,
+    'montant' => $cheque->montant
+]);
+
+
         return redirect()->route('cheques.entrants.index')->with('success', 'Chèque entrant ajouté.');
     }
 
@@ -102,6 +109,11 @@ class ChequeEntrantController extends Controller
         'is_read' => false,
     ]);
 
+    Log::enregistrer(auth()->id(), 'Modification chèque entrant', 'cheque', [
+    'numero' => $cheque->numero,
+    'montant' => $cheque->montant
+]);
+
 
         return redirect()->route('cheques.entrants.index')->with('success', 'Chèque modifié avec succès.');
     }
@@ -112,6 +124,8 @@ class ChequeEntrantController extends Controller
 
         Notification::where('cheque_id', $cheque->id)->delete();
         $cheque->delete();
+
+        Log::enregistrer(auth()->id(), 'Suppression chèque entrant', 'cheque', ['numero' => $cheque->numero]);
 
         return redirect()->route('cheques.entrants.index')->with('success', 'Chèque supprimé.');
     }
