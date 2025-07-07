@@ -74,7 +74,7 @@
 
                 <tr class="{{ $cheque->type === 'entrant' ? 'bg-green-50' : 'bg-red-50' }} {{ $match ? 'bg-yellow-100 border-yellow-300 font-semibold' : '' }}">
                     <td class="px-6 py-4">{!! $match ? highlightText($cheque->numero, $search) : e($cheque->numero) !!}</td>
-                    <td class="px-6 py-4">{!! $match ? highlightText($cheque->montant, $search) : e($cheque->montant) !!}</td>
+                    <td class="px-6 py-4">{!! $match ? highlightText($cheque->montant, $search) : e($cheque->montant) !!} DT</td>
                     <td class="px-6 py-4">{{ $cheque->date_echeance->format('d/m/Y') }}</td>
                     <td class="px-6 py-4">{!! $match ? highlightText($cheque->banque, $search) : e($cheque->banque) !!}</td>
                     <td class="px-6 py-4">{!! $match ? highlightText($cheque->tiers, $search) : e($cheque->tiers) !!}</td>
