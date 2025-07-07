@@ -49,7 +49,7 @@
                                                     ? route('cheques.entrants.edit', $notif->cheque) 
                                                     : route('cheques.sortants.edit', $notif->cheque) }}"
                                            class="block hover:bg-gray-100 px-2 py-1 rounded transition">
-                                            📌 {{ Str::limit($notif->message, 60) }}
+                                              {{ Str::limit($notif->message, 60) }}
                                             <span class="block text-xs text-gray-500">
                                                 {{ $notif->created_at->format('d/m/Y H:i') }}
                                             </span>

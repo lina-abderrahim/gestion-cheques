@@ -4,7 +4,7 @@ use App\Http\Controllers\ChequeEntrantController;
 use App\Http\Controllers\ChequeSortantController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\TraiteController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -58,5 +58,12 @@ Route::resource('cheques/entrants', ChequeEntrantController::class)->names('cheq
 // Pour les sortants
 Route::resource('cheques/sortants', ChequeSortantController::class)->names('cheques.sortants');
 
+Route::get('/cheques/{cheque}/traite', [TraiteController::class, 'imprimer'])
+    ->name('cheques.traite')
+    ->middleware(['auth']);
+
+
+    
 
 require __DIR__.'/auth.php';
+

@@ -34,26 +34,23 @@
     </div>
 
     <!-- Tableau des chèques -->
-    <div class="table-container overflow-x-auto">
-        <table class="min-w-full border border-gray-300">
+    <div class="overflow-x-auto">
+        <table class="min-w-full">
             <thead class="bg-gray-100">
                 <tr>
-                    <th class="px-6 py-3 text-left border-b">Numéro</th>
-                    <th class="px-6 py-3 text-left border-b">Montant</th>
-                    <th class="px-6 py-3 text-left border-b">Date Échéance</th>
-                    <th class="px-6 py-3 text-left border-b">Banque</th>
-                    <th class="px-6 py-3 text-left border-b">Tiers</th>
-                    <th class="px-6 py-3 text-left border-b">Statut</th>
-                    <th class="px-6 py-3 text-left border-b">Type</th>
-                    <th class="px-6 py-3 text-left border-b">Actions</th>
+                    <th class="px-6 py-3 text-left">Numéro</th>
+                    <th class="px-6 py-3 text-left">Montant</th>
+                    <th class="px-6 py-3 text-left">Date Échéance</th>
+                    <th class="px-6 py-3 text-left">Banque</th>
+                    <th class="px-6 py-3 text-left">Tiers</th>
+                    <th class="px-6 py-3 text-left">Statut</th>
+                    <th class="px-6 py-3 text-left">Commentaire</th>
+                    <th class="px-6 py-3 text-left">Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
                 @forelse ($cheques as $cheque)
-                <tr class="{{ 
-                    ($cheque->type === 'entrant' ? 'bg-green-50' : 'bg-red-50') . 
-                    (request('search') && str_contains($cheque->numero, request('search')) ? ' ring-2 ring-yellow-400' : '') 
-                }}">
+                <tr class="bg-red-50">
                     <td class="px-6 py-4">{{ $cheque->numero }}</td>
                     <td class="px-6 py-4">{{ number_format($cheque->montant, 2) }} DT</td>
                     <td class="px-6 py-4">{{ $cheque->date_echeance->format('d/m/Y') }}</td>
@@ -65,28 +62,20 @@
                             {{ $cheque->statut }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 capitalize">{{ $cheque->type }}</td>
+                    <td class="px-6 py-4">
+                        {{ $cheque->commentaire ?? '—' }}
+                    </td>
                     <td class="px-6 py-4">
                         <div class="flex gap-2">
-                            @if($cheque->type === 'entrant')
-                                <a href="{{ route('cheques.entrants.edit', $cheque) }}" 
-                                   class="text-blue-600 hover:text-blue-800" title="Modifier">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            @else
-                                <a href="{{ route('cheques.sortants.edit', $cheque) }}" 
-                                   class="text-blue-600 hover:text-blue-800" title="Modifier">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            @endif
-                            <form action="{{ $cheque->type === 'entrant' 
-                                          ? route('cheques.entrants.destroy', $cheque) 
-                                          : route('cheques.sortants.destroy', $cheque) }}" 
-                                  method="POST" onsubmit="return confirm('Êtes-vous sûr ?')">
+                            <a href="{{ route('cheques.sortants.edit', $cheque) }}" 
+                               class="text-blue-600 hover:text-blue-800" title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('cheques.sortants.destroy', $cheque) }}" 
+                                  method="POST" onsubmit="return confirm('Supprimer ce chèque ?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" 
-                                        class="text-red-600 hover:text-red-800" title="Supprimer">
+                                <button type="submit" class="text-red-600 hover:text-red-800" title="Supprimer">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
