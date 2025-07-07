@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use App\Models\Cheque;
+use App\Models\Log;
 use App\Models\Traite;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
@@ -36,8 +37,15 @@ public function imprimer(Cheque $cheque)
         ]
     );
 
+        Log::enregistrer(auth()->id(), 'pdf telechargé', 'traite', [
+    'cheque_id' => $cheque->id,
+    'numero' => $cheque->numero,
+    'tiers' => $cheque->tiers
+]);
+
     // 5. Télécharger le PDF
     return $pdf->download($nomFichier);
+
 }
 
 
@@ -59,6 +67,13 @@ public function printView(Cheque $cheque)
             'fichier_pdf' => $chemin,
         ]);
     }
+
+    Log::enregistrer(auth()->id(), 'Impression traite', 'traite', [
+    'cheque_id' => $cheque->id,
+    'numero' => $cheque->numero,
+    'tiers' => $cheque->tiers
+]);
+
 
     return view('cheques.traite_print', compact('cheque'));
 }

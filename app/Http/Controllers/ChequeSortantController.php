@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cheque;
+use App\Models\Log;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 
@@ -57,6 +58,12 @@ class ChequeSortantController extends Controller
             'is_read' => false,
         ]);
 
+        Log::enregistrer(auth()->id(), 'Création chèque sortant', 'cheque', [
+    'numero' => $cheque->numero,
+    'montant' => $cheque->montant
+]);
+
+
         return redirect()->route('cheques.sortants.index')->with('success', 'Chèque sortant ajouté avec succès.');
     }
 
@@ -82,9 +89,9 @@ class ChequeSortantController extends Controller
                 $type = $cheque->type;
         $numero = $cheque->numero;
         $message = match($type) {
-    'entrant' => "Chèque entrant à échéance demain (n°$numero)",
-    'sortant' => "Chèque sortant à échéance aujourd'hui (n°$numero)",
-    default   => "Chèque mis à jour (n°$numero)",};
+    'entrant' => "📌Chèque entrant à échéance demain (n°$numero)",
+    'sortant' => "📌Chèque sortant à échéance aujourd'hui (n°$numero)",
+    default   => "📌Chèque mis à jour (n°$numero)",};
     
     Notification::updateOrCreate(
     ['cheque_id' => $cheque->id],
@@ -94,6 +101,12 @@ class ChequeSortantController extends Controller
         'is_read' => false,
     ]);
 
+    Log::enregistrer(auth()->id(), 'Modification chèque sortant', 'cheque', [
+    'numero' => $cheque->numero,
+    'montant' => $cheque->montant
+]);
+
+
         return redirect()->route('cheques.sortants.index')->with('success', 'Chèque modifié avec succès.');
     }
 
@@ -101,6 +114,9 @@ class ChequeSortantController extends Controller
     {
         Notification::where('cheque_id', $cheque->id)->delete();
         $cheque->delete();
+
+        Log::enregistrer(auth()->id(), 'Suppression chèque sortant', 'cheque', ['numero' => $cheque->numero]);
+
 
         return redirect()->route('cheques.sortants.index')->with('success', 'Chèque supprimé avec succès.');
     }
