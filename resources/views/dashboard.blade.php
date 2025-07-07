@@ -8,7 +8,7 @@
     </div>
 @endif
 
-{{-- Barre de recherche --}}
+{{-- ✅ Barre de recherche --}}
 <div class="mb-6 bg-white p-4 rounded shadow">
     <form action="{{ route('dashboard') }}" method="GET" class="flex items-center gap-4">
         <input type="text" 
@@ -27,13 +27,14 @@
     </form>
 </div>
 
+{{-- ✅ Notification non lue --}}
 @if(isset($nbNotifsNonLues) && $nbNotifsNonLues > 0)
     <div class="mb-4 p-2 bg-yellow-200 text-yellow-900 rounded font-semibold">
         Vous avez {{ $nbNotifsNonLues }} notification(s) non lue(s).
     </div>
 @endif
 
-{{-- Boutons d’action --}}
+{{-- ✅ Boutons d’action --}}
 <div class="flex justify-end gap-4 mb-6">
     <a href="{{ route('cheques.entrants.create') }}" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2 rounded">
         + Nouveau Chèque Entrant
@@ -43,7 +44,7 @@
     </a>
 </div>
 
-{{-- Tableau des chèques --}}
+{{-- ✅ Tableau des chèques --}}
 <div class="overflow-x-auto bg-white rounded shadow">
     <table class="min-w-full border border-gray-300 text-sm">
         <thead class="bg-gray-200 text-gray-700 uppercase text-xs">
@@ -83,7 +84,7 @@
                     <td class="px-6 py-4 text-sm text-gray-700 italic">
                         {!! $match ? highlightText($cheque->commentaire ?? '', $search) : e($cheque->commentaire ?? '—') !!}
                     </td>
-                    <td class="px-6 py-4 flex gap-3">
+                    <td class="px-6 py-4 flex flex-col gap-2">
                         @if($cheque->type === 'entrant')
                             <a href="{{ route('cheques.entrants.edit', $cheque) }}" class="text-blue-600 hover:underline">Modifier</a>
                             <form action="{{ route('cheques.entrants.destroy', $cheque) }}" method="POST">
@@ -96,6 +97,9 @@
                                 @csrf @method('DELETE')
                                 <button type="submit" onclick="return confirm('Êtes-vous sûr ?')" class="text-red-600 hover:underline">Supprimer</button>
                             </form>
+                            <a href="{{ route('cheques.traite', $cheque) }}" class="text-indigo-600 hover:underline" target="_blank">
+                                📄 Traite
+                            </a>
                         @endif
                     </td>
                 </tr>
@@ -104,12 +108,12 @@
     </table>
 </div>
 
-{{-- Pagination --}}
+{{-- ✅ Pagination --}}
 <div class="mt-4">
     {{ $cheques->appends(request()->query())->links() }}
 </div>
 
-{{-- Fermeture automatique du message flash --}}
+{{-- ✅ Fermeture automatique du message flash --}}
 <script>
     setTimeout(() => {
         const flash = document.getElementById('flash-message');
