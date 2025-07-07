@@ -65,6 +65,10 @@ Route::get('/cheques/{cheque}/traite', [TraiteController::class, 'imprimer'])
 Route::get('/cheques/{cheque}/impression-directe', [TraiteController::class, 'printView'])
     ->name('cheques.impression_directe');
 
+    use App\Http\Controllers\LogController;
 
+    Route::get('/logs', [LogController::class, 'index'])
+        ->middleware(['auth', 'is_admin']);
+    
 require __DIR__.'/auth.php';
 
