@@ -13,9 +13,6 @@ return new class extends Migration
     {
         Schema::create('traites', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cheque_id')->constrained()->onDelete('cascade'); // clé étrangère vers cheques.id
-            $table->timestamp('date_impression')->nullable(); // Quand la traite a été générée
-            $table->string('fichier_pdf')->nullable();        // Chemin du fichier PDF
             $table->timestamps();
         });
     }
