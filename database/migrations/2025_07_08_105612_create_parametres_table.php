@@ -12,9 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('parametres', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+    $table->id();
+    $table->string('cle')->unique();      // ex: delai_alerte_entrant
+    $table->string('valeur');             // ex: 1
+    $table->text('description')->nullable(); // aide mémoire
+    $table->timestamps();
+});
+
     }
 
     /**

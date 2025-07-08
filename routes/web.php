@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TraiteController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\ParametreController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -71,6 +72,11 @@ Route::get('/cheques/{cheque}/impression-directe', [TraiteController::class, 'pr
     Route::get('/logs', [LogController::class, 'index'])
         ->name('logs.index')
         ->middleware(['auth', 'is_admin']);
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('parametres', ParametreController::class)->only(['index', 'edit', 'update']);
+});
+
 
 
     
