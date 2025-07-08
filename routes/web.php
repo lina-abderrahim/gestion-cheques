@@ -73,7 +73,7 @@ Route::get('/cheques/{cheque}/impression-directe', [TraiteController::class, 'pr
         ->name('logs.index')
         ->middleware(['auth', 'is_admin']);
 
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::resource('parametres', ParametreController::class)->only(['index', 'edit', 'update']);
 });
 
@@ -81,4 +81,3 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     
 require __DIR__.'/auth.php';
-
