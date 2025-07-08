@@ -26,25 +26,36 @@
                         class="text-white hover:text-gray-200 focus:outline-none">
                     <i class="fas fa-ellipsis-v"></i>
                 </button>
+<!-- Menu déroulant -->
+<div x-show="menuOpen" @click.away="menuOpen = false"
+     class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded shadow-md z-50 py-1"
+     x-cloak>
+    
+    <a href="{{ route('cheques.entrants.index') }}" 
+       class="block px-4 py-2 hover:bg-gray-100">
+        <i class="fas fa-sign-in-alt mr-2"></i> Chèques Entrants
+    </a>
 
-                <!-- Menu déroulant -->
-                <div x-show="menuOpen" @click.away="menuOpen = false"
-                     class="absolute left-0 mt-2 w-56 bg-white text-gray-800 rounded shadow-md z-50 py-1"
-                     x-cloak>
-                    <a href="{{ route('cheques.entrants.index') }}" 
-                       class="block px-4 py-2 hover:bg-gray-100">
-                        <i class="fas fa-sign-in-alt mr-2"></i> Chèques Entrants
-                    </a>
-                    <a href="{{ route('cheques.sortants.index') }}" 
-                       class="block px-4 py-2 hover:bg-gray-100">
-                        <i class="fas fa-sign-out-alt mr-2"></i> Chèques Sortants
-                    </a>
-                    <div class="border-t my-1"></div>
-                    <a href="{{ route('logs.index') }}" 
-                       class="block px-4 py-2 hover:bg-gray-100">
-                        <i class="fas fa-history mr-2"></i> Historique
-                    </a>
-                </div>
+    <a href="{{ route('cheques.sortants.index') }}" 
+       class="block px-4 py-2 hover:bg-gray-100">
+        <i class="fas fa-sign-out-alt mr-2"></i> Chèques Sortants
+    </a>
+
+    @if(auth()->user() && auth()->user()->isAdmin())
+        <div class="border-t my-1"></div>
+
+        <a href="{{ route('logs.index') }}" 
+           class="block px-4 py-2 hover:bg-gray-100">
+            <i class="fas fa-history mr-2"></i> Historique
+        </a>
+
+        <a href="{{ route('parametres.index') }}" 
+           class="block px-4 py-2 hover:bg-gray-100">
+            <i class="fas fa-cogs mr-2"></i> Paramètres
+        </a>
+    @endif
+</div>
+
             </div>
         </div>
 

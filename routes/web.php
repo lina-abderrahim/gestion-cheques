@@ -5,7 +5,6 @@ use App\Http\Controllers\ChequeSortantController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TraiteController;
-use App\Http\Controllers\LogController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -66,12 +65,10 @@ Route::get('/cheques/{cheque}/traite', [TraiteController::class, 'imprimer'])
 Route::get('/cheques/{cheque}/impression-directe', [TraiteController::class, 'printView'])
     ->name('cheques.impression_directe');
 
-  
+    use App\Http\Controllers\LogController;
 
     Route::get('/logs', [LogController::class, 'index'])
+        ->name('logs.index')
         ->middleware(['auth', 'is_admin']);
-
-
     
 require __DIR__.'/auth.php';
-
