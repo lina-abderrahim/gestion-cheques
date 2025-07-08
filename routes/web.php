@@ -1,15 +1,11 @@
 <?php
 
-use App\Http\Controllers\{
-    ChequeEntrantController,
-    ChequeSortantController,
-    DashboardController,
-    ProfileController,
-    TraiteController,
-    LogController
-};
+use App\Http\Controllers\ChequeEntrantController;
+use App\Http\Controllers\ChequeSortantController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\TraiteController;
+use App\Http\Controllers\LogController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,45 +21,57 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Routes d'authentification
-require __DIR__.'/auth.php';
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-// Routes protégées par authentification
-Route::middleware(['auth', 'verified'])->group(function () {
-    // Route dashboard unique
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
-    // Routes de profil
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Routes pour les chèques entrants
-    Route::prefix('cheques/entrants')->group(function () {
-        Route::get('/recherche', [ChequeEntrantController::class, 'search'])->name('cheques.entrants.search');
-        Route::resource('/', ChequeEntrantController::class)
-            ->names('cheques.entrants')
-            ->parameters(['' => 'cheque']);
-    });
-
-    // Routes pour les chèques sortants
-    Route::prefix('cheques/sortants')->group(function () {
-        Route::get('/recherche', [ChequeSortantController::class, 'search'])->name('cheques.sortants.search');
-        Route::resource('/', ChequeSortantController::class)
-            ->names('cheques.sortants')
-            ->parameters(['' => 'cheque']);
-    });
-
-    // Routes pour les traites
-    Route::prefix('cheques')->group(function () {
-        Route::get('/{cheque}/traite', [TraiteController::class, 'imprimer'])
-            ->name('cheques.traite');
-        Route::get('/{cheque}/impression-directe', [TraiteController::class, 'printView'])
-            ->name('cheques.impression_directe');
-    });
-
-    // Routes d'administration
-    Route::middleware('is_admin')->group(function () {
-        Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
-    });
 });
+Route::middleware('auth')->get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});
+use App\Http\Controllers\DashboardController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+});
+// Pour les chèques entrants
+Route::get('/cheques/entrants/recherche', [App\Http\Controllers\ChequeEntrantController::class, 'search'])->name('cheques.entrants.search');
+
+// Pour les chèques sortants
+Route::get('/cheques/sortants/recherche', [App\Http\Controllers\ChequeSortantController::class, 'search'])->name('cheques.sortants.search');
+
+// Pour les entrants
+Route::resource('cheques/entrants', ChequeEntrantController::class)->names('cheques.entrants');
+
+// Pour les sortants
+Route::resource('cheques/sortants', ChequeSortantController::class)->names('cheques.sortants');
+
+Route::get('/cheques/{cheque}/traite', [TraiteController::class, 'imprimer'])
+    ->name('cheques.traite')
+    ->middleware(['auth']);
+
+Route::get('/cheques/{cheque}/impression-directe', [TraiteController::class, 'printView'])
+    ->name('cheques.impression_directe');
+
+  
+
+    Route::get('/logs', [LogController::class, 'index'])
+        ->middleware(['auth', 'is_admin']);
+
+
+    
+require __DIR__.'/auth.php';
+
